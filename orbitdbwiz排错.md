@@ -177,3 +177,31 @@ echo ==================== RUN TEST ====================
 echo.
 echo ==================== EXIT CODE ====================
 echo %ERRORLEVEL%
+
+输出
+C:\Users\QXZ4Y4A>powershell -NoProfile -Command "Get-Item -LiteralPath $env:ODB -Stream * | Format-Table Stream,Length -AutoSize"
+
+Stream            Length
+------            ------
+:$DATA          14664192
+Zone.Identifier      112
+
+
+
+C:\Users\QXZ4Y4A>powershell -NoProfile -Command "Unblock-File -LiteralPath $env:ODB"
+
+C:\Users\QXZ4Y4A>powershell -NoProfile -Command "Get-Item -LiteralPath $env:ODB -Stream * | Format-Table Stream,Length -AutoSize"
+
+Stream   Length
+------   ------
+:$DATA 14664192
+
+
+
+C:\Users\QXZ4Y4A>"%ODB%" --help
+Access is denied.
+
+C:\Users\QXZ4Y4A>echo %ERRORLEVEL%
+5
+
+C:\Users\QXZ4Y4A>
