@@ -210,3 +210,1218 @@ C:\Users\QXZ4Y4A>
 
 输入：
 powershell -NoProfile -Command "$odb=\"$env:USERPROFILE\orbitdbwiz.exe\";$test=\"$env:TEMP\orbitdbwiz-test.exe\";Write-Host '===== 1 APPLOCKER POLICY =====';$p=Get-AppLockerPolicy -Effective -ErrorAction SilentlyContinue;if($p){Test-AppLockerPolicy -PolicyObject $p -Path $odb -User \"$env:USERDOMAIN\$env:USERNAME\" | Format-List}else{Write-Host 'Unable to read effective AppLocker policy'};Write-Host '===== 2 COPY TO TEMP =====';Copy-Item -LiteralPath $odb -Destination $test -Force;icacls $test;Write-Host '===== 3 RUN TEMP COPY =====';& $test --help;Write-Host ('Exit code: '+$LASTEXITCODE);Write-Host '===== 4 APPLOCKER EVENTS =====';Get-WinEvent -LogName 'Microsoft-Windows-AppLocker/EXE and DLL' -MaxEvents 300 -ErrorAction SilentlyContinue | Where-Object {$_.Message -match 'orbitdbwiz'} | Select-Object TimeCreated,Id,LevelDisplayName,Message | Format-List;Write-Host '===== 5 CODE INTEGRITY EVENTS =====';Get-WinEvent -LogName 'Microsoft-Windows-CodeIntegrity/Operational' -MaxEvents 500 -ErrorAction SilentlyContinue | Where-Object {$_.Message -match 'orbitdbwiz'} | Select-Object TimeCreated,Id,LevelDisplayName,Message | Format-List;Write-Host '===== 6 DEFENDER EVENTS =====';Get-WinEvent -LogName 'Microsoft-Windows-Windows Defender/Operational' -MaxEvents 500 -ErrorAction SilentlyContinue | Where-Object {$_.Message -match 'orbitdbwiz|d9286934c01a484fe267572d5e24e1996be8de1624f1cc38af486492e27c78dd'} | Select-Object TimeCreated,Id,LevelDisplayName,Message | Format-List;Write-Host '===== 7 SOFTWARE RESTRICTION POLICY =====';reg query 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers' /s;reg query 'HKCU\SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers' /s;Write-Host '===== 8 APPLICATION EVENTS =====';$since=(Get-Date).AddMinutes(-10);Get-WinEvent -FilterHashtable @{LogName='Application';StartTime=$since} -ErrorAction SilentlyContinue | Where-Object {$_.Message -match 'orbitdbwiz|Access is denied|blocked|prevented|restriction'} | Select-Object TimeCreated,ProviderName,Id,LevelDisplayName,Message | Format-List;Write-Host '===== FINISHED ====='"
+
+
+输出
+C:\Users\QXZ4Y4A>powershell -NoProfile -Command "$odb=\"$env:USERPROFILE\orbitdbwiz.exe\";$test=\"$env:TEMP\orbitdbwiz-test.exe\";Write-Host '===== 1 APPLOCKER POLICY =====';$p=Get-AppLockerPolicy -Effective -ErrorAction SilentlyContinue;if($p){Test-AppLockerPolicy -PolicyObject $p -Path $odb -User \"$env:USERDOMAIN\$env:USERNAME\" | Format-List}else{Write-Host 'Unable to read effective AppLocker policy'};Write-Host '===== 2 COPY TO TEMP =====';Copy-Item -LiteralPath $odb -Destination $test -Force;icacls $test;Write-Host '===== 3 RUN TEMP COPY =====';& $test --help;Write-Host ('Exit code: '+$LASTEXITCODE);Write-Host '===== 4 APPLOCKER EVENTS =====';Get-WinEvent -LogName 'Microsoft-Windows-AppLocker/EXE and DLL' -MaxEvents 300 -ErrorAction SilentlyContinue | Where-Object {$_.Message -match 'orbitdbwiz'} | Select-Object TimeCreated,Id,LevelDisplayName,Message | Format-List;Write-Host '===== 5 CODE INTEGRITY EVENTS =====';Get-WinEvent -LogName 'Microsoft-Windows-CodeIntegrity/Operational' -MaxEvents 500 -ErrorAction SilentlyContinue | Where-Object {$_.Message -match 'orbitdbwiz'} | Select-Object TimeCreated,Id,LevelDisplayName,Message | Format-List;Write-Host '===== 6 DEFENDER EVENTS =====';Get-WinEvent -LogName 'Microsoft-Windows-Windows Defender/Operational' -MaxEvents 500 -ErrorAction SilentlyContinue | Where-Object {$_.Message -match 'orbitdbwiz|d9286934c01a484fe267572d5e24e1996be8de1624f1cc38af486492e27c78dd'} | Select-Object TimeCreated,Id,LevelDisplayName,Message | Format-List;Write-Host '===== 7 SOFTWARE RESTRICTION POLICY =====';reg query 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers' /s;reg query 'HKCU\SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers' /s;Write-Host '===== 8 APPLICATION EVENTS =====';$since=(Get-Date).AddMinutes(-10);Get-WinEvent -FilterHashtable @{LogName='Application';StartTime=$since} -ErrorAction SilentlyContinue | Where-Object {$_.Message -match 'orbitdbwiz|Access is denied|blocked|prevented|restriction'} | Select-Object TimeCreated,ProviderName,Id,LevelDisplayName,Message | Format-List;Write-Host '===== FINISHED ====='"
+===== 1 APPLOCKER POLICY =====
+
+
+FilePath       : C:\Users\QXZ4Y4A\orbitdbwiz.exe
+PolicyDecision : AllowedByDefault
+MatchingRule   :
+
+
+
+===== 2 COPY TO TEMP =====
+C:\Users\QXZ4Y4A\AppData\Local\Temp\orbitdbwiz-test.exe NT AUTHORITY\SYSTEM:(F)
+                                                        BUILTIN\Administrators:(F)
+                                                        CHINA\QXZ4Y4A:(F)
+
+Successfully processed 1 files; Failed processing 0 files
+===== 3 RUN TEMP COPY =====
+Program 'orbitdbwiz-test.exe' failed to run: Access is deniedAt line:1 char:503
++ ... $test;Write-Host '===== 3 RUN TEMP COPY =====';& $test --help;Write-H ...
++                                                    ~~~~~~~~~~~~~~.
+At line:1 char:503
++ ... $test;Write-Host '===== 3 RUN TEMP COPY =====';& $test --help;Write-H ...
++                                                    ~~~~~~~~~~~~~~
+    + CategoryInfo          : ResourceUnavailable: (:) [], ApplicationFailedException
+    + FullyQualifiedErrorId : NativeCommandFailed
+
+Exit code: 0
+===== 4 APPLOCKER EVENTS =====
+===== 5 CODE INTEGRITY EVENTS =====
+
+
+TimeCreated      : 2026/7/21 13:41:51
+Id               : 3076
+LevelDisplayName : Information
+Message          : Code Integrity determined that a process (\Device\HarddiskVolume4\Windows\System32\cmd.exe) attempte
+                   d to load \Device\HarddiskVolume4\Users\QXZ4Y4A\orbitdbwiz.exe that did not meet the Enterprise sign
+                   ing level requirements or violated code integrity policy (Policy ID:{a244370e-44c9-4c06-b551-f6016e5
+                   63076}). However, due to code integrity auditing policy, the image was allowed to load.
+
+TimeCreated      : 2026/7/21 13:29:26
+Id               : 3076
+LevelDisplayName : Information
+Message          : Code Integrity determined that a process (\Device\HarddiskVolume4\Windows\System32\cmd.exe) attempte
+                   d to load \Device\HarddiskVolume4\Users\QXZ4Y4A\orbitdbwiz.exe that did not meet the Enterprise sign
+                   ing level requirements or violated code integrity policy (Policy ID:{a244370e-44c9-4c06-b551-f6016e5
+                   63076}). However, due to code integrity auditing policy, the image was allowed to load.
+
+
+
+===== 6 DEFENDER EVENTS =====
+
+
+TimeCreated      : 2026/7/21 14:35:06
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\AppData\Local\Temp\orbitdbwiz-test.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+                        Security intelligence Version: AV: 1.455.241.0, AS: 1.455.241.0, NIS: 1.455.241.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 14:27:18
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.241.0, AS: 1.455.241.0, NIS: 1.455.241.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 14:26:38
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.241.0, AS: 1.455.241.0, NIS: 1.455.241.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 14:14:59
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.241.0, AS: 1.455.241.0, NIS: 1.455.241.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 14:14:18
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.241.0, AS: 1.455.241.0, NIS: 1.455.241.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 14:14:18
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.241.0, AS: 1.455.241.0, NIS: 1.455.241.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 14:13:41
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.241.0, AS: 1.455.241.0, NIS: 1.455.241.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 14:13:22
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.241.0, AS: 1.455.241.0, NIS: 1.455.241.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 13:46:20
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.241.0, AS: 1.455.241.0, NIS: 1.455.241.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 13:45:35
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.241.0, AS: 1.455.241.0, NIS: 1.455.241.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 13:44:24
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: containerfile:_C:\Users\QXZ4Y4A\Downloads\orbitdbwiz_v0.1.47_x86_64-pc-windows-msvc.zip; fil
+                   e:_C:\Users\QXZ4Y4A\Downloads\orbitdbwiz_v0.1.47_x86_64-pc-windows-msvc.zip->orbitdbwiz.exe; webfile
+                   :_C:\Users\QXZ4Y4A\Downloads\orbitdbwiz_v0.1.47_x86_64-pc-windows-msvc.zip|https://media.atc-github.
+                   azure.cloud.bmw/releases/301045/files/74635?token=AAAPCM46K6534TJVKDVBJNLKL4KQK|pid:20560,ProcessSta
+                   rt:134290862132149552
+                        Detection Origin: Internet
+                        Detection Type: FastPath
+                        Detection Source: Downloads and attachments
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: Unknown
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.241.0, AS: 1.455.241.0, NIS: 1.455.241.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 13:43:38
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: containerfile:_C:\Users\QXZ4Y4A\Downloads\orbitdbwiz_v0.1.47_x86_64-pc-windows-msvc.zip; fil
+                   e:_C:\Users\QXZ4Y4A\Downloads\orbitdbwiz_v0.1.47_x86_64-pc-windows-msvc.zip->orbitdbwiz.exe; webfile
+                   :_C:\Users\QXZ4Y4A\Downloads\orbitdbwiz_v0.1.47_x86_64-pc-windows-msvc.zip|https://media.atc-github.
+                   azure.cloud.bmw/releases/301045/files/74635?token=AAAPCM46K6534TJVKDVBJNLKL4KQK|pid:20560,ProcessSta
+                   rt:134290862132149552
+                        Detection Origin: Internet
+                        Detection Type: FastPath
+                        Detection Source: Downloads and attachments
+                        User: CHINA\QXZ4Y4A
+                        Process Name: Unknown
+                        Security intelligence Version: AV: 1.455.241.0, AS: 1.455.241.0, NIS: 1.455.241.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 13:25:07
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 13:24:23
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 12:59:09
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 12:58:27
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 12:18:21
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_c:\users\qxz4y4a\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: System
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: Unknown
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 12:17:28
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_c:\users\qxz4y4a\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: System
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: Unknown
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 11:34:26
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 11:33:42
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 11:28:05
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\tspaws-cli\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 11:27:21
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\tspaws-cli\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 11:20:59
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 11:20:15
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 11:19:37
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 11:18:49
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 11:10:17
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 11:09:33
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 11:00:00
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 10:59:11
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 10:49:56
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 10:49:10
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 10:45:27
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 10:44:39
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 10:40:51
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 10:40:01
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 10:39:18
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 10:38:25
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 10:09:35
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 10:08:47
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 10:05:36
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 10:04:40
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.235.0, AS: 1.455.235.0, NIS: 1.455.235.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 9:48:32
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.226.0, AS: 1.455.226.0, NIS: 1.455.226.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 9:47:44
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.226.0, AS: 1.455.226.0, NIS: 1.455.226.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 9:47:44
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\tspaws-cli\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.226.0, AS: 1.455.226.0, NIS: 1.455.226.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 9:47:01
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.226.0, AS: 1.455.226.0, NIS: 1.455.226.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 9:46:53
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\tspaws-cli\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.226.0, AS: 1.455.226.0, NIS: 1.455.226.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 9:45:16
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\tspaws-cli\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.226.0, AS: 1.455.226.0, NIS: 1.455.226.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 9:44:22
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\tspaws-cli\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.226.0, AS: 1.455.226.0, NIS: 1.455.226.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 9:44:13
+Id               : 1117
+LevelDisplayName : Information
+Message          : Microsoft Defender Antivirus has detected malware or potentially unwanted software using Defender se
+                   curity intelligence and applied the remediation action defined in the security settings.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\tspaws-cli\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: NT AUTHORITY\SYSTEM
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Action: Block
+                        Action Status:  No additional actions required
+                        Error Code: 0x00000000
+                        Error description: The operation completed successfully.
+                        Security intelligence Version: AV: 1.455.226.0, AS: 1.455.226.0, NIS: 1.455.226.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+TimeCreated      : 2026/7/21 9:43:24
+Id               : 1116
+LevelDisplayName : Warning
+Message          : Microsoft Defender Antivirus has detected malware or other potentially unwanted software.
+                    For more information please see the following:
+                   https://go.microsoft.com/fwlink/?linkid=37020&name=EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl&thr
+                   eatid=2147757445&enterprise=1
+                        Name: EUS:Win32/CustomEnterpriseNoAlertBlockOnly!cl
+                        ID: 2147757445
+                        Severity: Severe
+                        Category: Enterprise Unwanted Software
+                        Path: file:_C:\Users\QXZ4Y4A\tspaws-cli\orbitdbwiz.exe
+                        Detection Origin: Local machine
+                        Detection Type: FastPath
+                        Detection Source: Real-Time Protection
+                        User: CHINA\QXZ4Y4A
+                        Process Name: C:\Windows\System32\cmd.exe
+                        Security intelligence Version: AV: 1.455.226.0, AS: 1.455.226.0, NIS: 1.455.226.0
+                        Engine Version: AM: 1.1.26060.3008, NIS: 1.1.26060.3008
+
+
+
+===== 7 SOFTWARE RESTRICTION POLICY =====
+
+HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers
+    authenticodeenabled    REG_DWORD    0x0
+
+ERROR: The system was unable to find the specified registry key or value.
+===== 8 APPLICATION EVENTS =====
+===== FINISHED =====
+
+C:\Users\QXZ4Y4A>
