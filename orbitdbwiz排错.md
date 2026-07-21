@@ -154,3 +154,26 @@ C:\Users\QXZ4Y4A>wevtutil qe "Microsoft-Windows-AppLocker/EXE and DLL" /rd:true 
 C:\Users\QXZ4Y4A>wevtutil qe "Microsoft-Windows-CodeIntegrity/Operational" /rd:true /f:text /c:100 2>&1 | findstr /i /c:"orbitdbwiz" /c:"denied" /c:"blocked" /c:"prevented"
 
 C:\Users\QXZ4Y4A>
+
+
+输入：
+set "ODB=%USERPROFILE%\orbitdbwiz.exe"
+
+echo ==================== BEFORE ====================
+powershell -NoProfile -Command "Get-Item -LiteralPath $env:ODB -Stream * | Format-Table Stream,Length -AutoSize"
+
+echo.
+echo ==================== REMOVE DOWNLOAD BLOCK ====================
+powershell -NoProfile -Command "Unblock-File -LiteralPath $env:ODB"
+
+echo.
+echo ==================== AFTER ====================
+powershell -NoProfile -Command "Get-Item -LiteralPath $env:ODB -Stream * | Format-Table Stream,Length -AutoSize"
+
+echo.
+echo ==================== RUN TEST ====================
+"%ODB%" --help
+
+echo.
+echo ==================== EXIT CODE ====================
+echo %ERRORLEVEL%
