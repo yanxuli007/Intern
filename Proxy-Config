@@ -1,0 +1,5 @@
+set proxy=QXZ4Y4A:ReplyNewPersonInNanjing00@proxycn.bmwgroup.net:8080
+set http_proxy=http://%proxy%
+set https_proxy=http://%proxy%
+set all_proxy=http://%proxy%
+set no_proxy=localhost,127.0.0.0,127.0.0.1,127.0.1.1,local.home,10.6.15.99,aws.cloud.bmw,.bmwgroup.net,.muc
