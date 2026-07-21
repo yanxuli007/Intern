@@ -199,9 +199,14 @@ Stream   Length
 
 
 C:\Users\QXZ4Y4A>"%ODB%" --help
+
 Access is denied.
 
 C:\Users\QXZ4Y4A>echo %ERRORLEVEL%
 5
 
 C:\Users\QXZ4Y4A>
+
+
+输入：
+powershell -NoProfile -Command "$odb=\"$env:USERPROFILE\orbitdbwiz.exe\";$test=\"$env:TEMP\orbitdbwiz-test.exe\";Write-Host '===== 1 APPLOCKER POLICY =====';$p=Get-AppLockerPolicy -Effective -ErrorAction SilentlyContinue;if($p){Test-AppLockerPolicy -PolicyObject $p -Path $odb -User \"$env:USERDOMAIN\$env:USERNAME\" | Format-List}else{Write-Host 'Unable to read effective AppLocker policy'};Write-Host '===== 2 COPY TO TEMP =====';Copy-Item -LiteralPath $odb -Destination $test -Force;icacls $test;Write-Host '===== 3 RUN TEMP COPY =====';& $test --help;Write-Host ('Exit code: '+$LASTEXITCODE);Write-Host '===== 4 APPLOCKER EVENTS =====';Get-WinEvent -LogName 'Microsoft-Windows-AppLocker/EXE and DLL' -MaxEvents 300 -ErrorAction SilentlyContinue | Where-Object {$_.Message -match 'orbitdbwiz'} | Select-Object TimeCreated,Id,LevelDisplayName,Message | Format-List;Write-Host '===== 5 CODE INTEGRITY EVENTS =====';Get-WinEvent -LogName 'Microsoft-Windows-CodeIntegrity/Operational' -MaxEvents 500 -ErrorAction SilentlyContinue | Where-Object {$_.Message -match 'orbitdbwiz'} | Select-Object TimeCreated,Id,LevelDisplayName,Message | Format-List;Write-Host '===== 6 DEFENDER EVENTS =====';Get-WinEvent -LogName 'Microsoft-Windows-Windows Defender/Operational' -MaxEvents 500 -ErrorAction SilentlyContinue | Where-Object {$_.Message -match 'orbitdbwiz|d9286934c01a484fe267572d5e24e1996be8de1624f1cc38af486492e27c78dd'} | Select-Object TimeCreated,Id,LevelDisplayName,Message | Format-List;Write-Host '===== 7 SOFTWARE RESTRICTION POLICY =====';reg query 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers' /s;reg query 'HKCU\SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers' /s;Write-Host '===== 8 APPLICATION EVENTS =====';$since=(Get-Date).AddMinutes(-10);Get-WinEvent -FilterHashtable @{LogName='Application';StartTime=$since} -ErrorAction SilentlyContinue | Where-Object {$_.Message -match 'orbitdbwiz|Access is denied|blocked|prevented|restriction'} | Select-Object TimeCreated,ProviderName,Id,LevelDisplayName,Message | Format-List;Write-Host '===== FINISHED ====='"
